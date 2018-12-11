@@ -1,0 +1,210 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+@prefix knora-base: <http://www.knora.org/ontology/knora-base#> .
+@prefix salsah-gui: <http://www.knora.org/ontology/salsah-gui#> .
+
+@prefix : <http://www.knora.org/ontology/0815/stillimagemedia#> .
+
+### Alternative ontology name: stillimagefilm analoguephotographyfilm etc...
+
+<http://www.knora.org/ontology/0815/stillimagemedia> rdf:type owl:Ontology ;
+    rdfs:label "The still image media ontology"@en ;
+    knora-base:attachedToProject <http://rdfh.ch/projects/0815> .
+
+##########################################################
+#
+# PROPERTIES
+#
+##########################################################
+
+### ###########################################
+### stillimagemedia:filmname
+
+
+:filmname rdf:type owl:ObjectProperty ;
+
+            rdfs:subPropertyOf knora-base:hasValue;
+
+            rdfs:label "Filmname (Handelsname)"@de ,
+                       "Film name (Trade name)"@en ;
+
+            rdfs:comment """Filmname, Handelsname"""@de ,
+                         """Film name, Trade name"""@en ;
+
+            knora-base:subjectClassConstraint knora-base:Resource ;
+
+            knora-base:objectClassConstraint knora-base:TextValue ;
+
+            salsah-gui:guiElement salsah-gui:SimpleText ;
+
+            salsah-gui:guiAttribute "size=60" ,
+                                    "maxlength=200" .
+
+
+
+### ###########################################
+### stillimagemedia:description
+
+:description rdf:type owl:ObjectProperty ;
+
+             rdfs:subPropertyOf knora-base:hasValue, dcterms:description ;
+
+             rdfs:label "Beschreibung (Richtext)"@de ,
+                        "Description"@en ;
+
+             rdfs:comment """Beschreibung"""@de ,
+                          """Description"""@en ;
+
+             knora-base:subjectClassConstraint knora-base:Resource ;
+
+             knora-base:objectClassConstraint knora-base:TextValue ;
+
+             salsah-gui:guiElement salsah-gui:Richtext .
+
+
+### ###########################################
+### stillimagemedia:specimen
+
+:specimen rdf:type owl:ObjectProperty ;
+
+          rdfs:subPropertyOf knora-base:hasValue ;
+
+          rdfs:label  "Muster"@de ,
+                      "Specimen"@en ;
+
+          rdfs:comment """Das Muster ist zeigt ein Bild eines Vertreters des Films"""@de ,
+                       """The specimen shows an image of an instance of the film"""@en ;
+
+          knora-base:subjectClassConstraint knora-base:Resource ;
+
+          knora-base:objectClassConstraint knora-base:TextValue;
+
+          salsah-gui:guiElement salsah-gui:Richtext .
+
+
+### ###########################################
+### stillimagemedia:filename
+
+:filename rdf:type owl:ObjectProperty ;
+
+      rdfs:subPropertyOf knora-base:hasValue ;
+
+      rdfs:label "Filename"@de ,
+                 "Filename"@en ;
+
+      rdfs:comment """Filename der Bildrepresentation des Musters"""@de ,
+                   """Filename of the representation of the specimen"""@en ;
+
+      knora-base:subjectClassConstraint knora-base:Resource ;
+
+      knora-base:objectClassConstraint knora-base:TextValue;
+
+      salsah-gui:guiElement salsah-gui:Richtext .
+
+### ###########################################
+### link properties
+
+:belongsToStillImageFilm rdf:type owl:ObjectProperty ;
+
+    rdfs:subPropertyOf knora-base:hasLinkTo ;
+
+    rdfs:label  "Gehört zu Film "@de ,
+                "Belongs to film"@en ;
+
+    rdfs:comment  """Link vom Filmmuster zum Handelsnamen des Films"""@de ,
+                  """Link from the specimen to the tradename of the film"""@en ;
+
+    knora-base:subjectClassConstraint :filmspecimen ;
+
+    knora-base:objectClassConstraint :stillimagefilm .
+
+
+:belongsToStillImageFilmValue rdf:type owl:ObjectProperty ;
+
+    rdfs:subPropertyOf knora-base:hasLinkToValue ;
+
+    rdfs:label "Wert der Verknüpfung"@de ,
+                "Value of the Linkname"@en ;
+
+    rdfs:comment """Wert des Namens, der das Muster mit dem Handelsnamen verknüpft"""@de ,
+                 """Value of the name which links the specimen with the trade name"""@en ;
+
+    knora-base:subjectClassConstraint :filmspecimen ;
+
+    knora-base:objectClassConstraint knora-base:LinkValue .
+
+
+### more properties
+
+
+##########################################################
+#
+# RESOURCES
+#
+##########################################################
+
+
+### ###########################################
+### stillimagemedia:stillimagefilm
+
+:stillimagefilm rdf:type owl:Class ;
+
+    rdfs:subClassOf knora-base:Resource ,
+        [
+            rdf:type owl:Restriction ;
+            owl:onProperty :filmname ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+            salsah-gui:guiOrder "1"^^xsd:nonNegativeInteger
+        ] ,
+        [
+            rdf:type owl:Restriction ;
+            owl:onProperty :description ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+            salsah-gui:guiOrder "2"^^xsd:nonNegativeInteger
+        ];
+
+    knora-base:resourceIcon "film.gif" ;
+
+    rdfs:label "Film"@de ,
+               "Film"@en ;
+
+    rdfs:comment """Diese Resource-Klasse beschreibt einen Analog-Fotografie Film"""@de .
+
+### ###########################################
+### stillimagemedia:filmspecimen
+
+:filmspecimen rdf:type owl:Class ;
+
+  rdfs:subClassOf knora-base:Resource ,
+      [
+        rdf:type owl:Restriction ;
+        owl:onProperty :specimen ;
+        owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+        salsah-gui:guiOrder "3"^^xsd:nonNegativeInteger
+      ] ,
+      [
+        rdf:type owl:Restriction ;
+        owl:onProperty :filename ;
+        owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+        salsah-gui:guiOrder "4"^^xsd:nonNegativeInteger
+      ] ,
+      [
+        rdf:type owl:Restriction ;
+        owl:onProperty :belongsToStillImageFilm ;
+        owl:minCardinality "0"^^xsd:nonNegativeInteger
+      ] ,
+      [
+        rdf:type owl:Restriction ;
+        owl:onProperty :belongsToStillImageFilmValue ;
+        owl:minCardinality "0"^^xsd:nonNegativeInteger
+      ];
+
+      rdfs:label "Muster"@de ,
+                 "Specimen"@en ;
+
+      rdfs:comment """Diese Resource-Klasse beschreibt ein Filmmuster"""@de .
