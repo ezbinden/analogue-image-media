@@ -180,7 +180,7 @@
 
 :filmspecimen rdf:type owl:Class ;
 
-  rdfs:subClassOf knora-base:Resource ,
+  rdfs:subClassOf knora-base:StillImageRepresentation ,
       [
         rdf:type owl:Restriction ;
         owl:onProperty :specimen ;
