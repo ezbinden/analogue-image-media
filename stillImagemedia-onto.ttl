@@ -36,7 +36,7 @@
             rdfs:comment """Filmname, Handelsname"""@de ,
                          """Film name, Trade name"""@en ;
 
-            knora-base:subjectClassConstraint knora-base:Resource ;
+            knora-base:subjectClassConstraint :stillimagefilm ;
 
             knora-base:objectClassConstraint knora-base:TextValue ;
 
@@ -60,11 +60,72 @@
              rdfs:comment """Beschreibung"""@de ,
                           """Description"""@en ;
 
-             knora-base:subjectClassConstraint knora-base:Resource ;
+             knora-base:subjectClassConstraint :stillimagefilm ;
 
              knora-base:objectClassConstraint knora-base:TextValue ;
 
              salsah-gui:guiElement salsah-gui:Richtext .
+
+### ###########################################
+### stillimagemedia:productionHasStart
+
+:productionHasStart rdf:type owl:ObjectProperty ;
+
+            rdfs:subPropertyOf knora-base:hasValue ;
+
+            rdfs:label "Markteinführung"@de ,
+                                     "Market launch"@en ;
+
+            rdfs:comment """Markteinführung"""@de ,
+                                       """Marked lauch"""@en ;
+
+            knora-base:subjectClassConstraint :stillimagefilm ;
+
+            knora-base:objectClassConstraint knora-base:DateValue ;
+
+            salsah-gui:guiElement salsah-gui:Date .
+
+
+### ###########################################
+### stillimagemedia:productionHasEnd
+
+:productionHasEnd rdf:type owl:ObjectProperty ;
+
+            rdfs:subPropertyOf knora-base:hasValue ;
+
+            rdfs:label "Produktionsende"@de ,
+                       "End of production"@en ;
+
+            rdfs:comment """Produktionsende"""@de ,
+                         """End of production"""@en ;
+
+            knora-base:subjectClassConstraint :stillimagefilm ;
+
+            knora-base:objectClassConstraint knora-base:DateValue ;
+
+            salsah-gui:guiElement salsah-gui:Date .
+
+
+
+### ###########################################
+### stillimagemedia:haslightType
+
+:haslightType rdf:type owl:ObjectProperty ;
+
+            rdfs:subPropertyOf knora-base:hasValue ;
+
+            rdfs:label "Lichttyp"@de ,
+                        "light type"@en ;
+
+            rdfs:comment """T bedeutet Tageslicht, K bedeutet Kunstlicht"""@de ,
+                         """T means Daylight, K means artificial light"""@en ;
+
+            knora-base:subjectClassConstraint :stillimagefilm ;
+
+            knora-base:objectClassConstraint knora-base:TextValue ;
+
+            salsah-gui:guiElement salsah-gui:Richtext .
+
 
 
 ### ###########################################
@@ -80,7 +141,7 @@
           rdfs:comment """Das Muster ist zeigt ein Bild eines Vertreters des Films"""@de ,
                        """The specimen shows an image of an instance of the film"""@en ;
 
-          knora-base:subjectClassConstraint knora-base:Resource ;
+          knora-base:subjectClassConstraint :filmspecimen ;
 
           knora-base:objectClassConstraint knora-base:TextValue;
 
@@ -100,7 +161,7 @@
       rdfs:comment """Filename der Bildrepresentation des Musters"""@de ,
                    """Filename of the representation of the specimen"""@en ;
 
-      knora-base:subjectClassConstraint knora-base:Resource ;
+      knora-base:subjectClassConstraint :filmspecimen ;
 
       knora-base:objectClassConstraint knora-base:TextValue;
 
@@ -166,7 +227,26 @@
             owl:onProperty :description ;
             owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
             salsah-gui:guiOrder "2"^^xsd:nonNegativeInteger
-        ];
+        ],
+        [
+            rdf:type owl:Restriction ;
+            owl:onProperty :productionHasStart ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+            salsah-gui:guiOrder "3"^^xsd:nonNegativeInteger
+        ],
+        [
+            rdf:type owl:Restriction ;
+            owl:onProperty :productionHasEnd ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+            salsah-gui:guiOrder "4"^^xsd:nonNegativeInteger
+        ],
+        [
+            rdf:type owl:Restriction ;
+            owl:onProperty :haslightType ;
+            owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
+            salsah-gui:guiOrder "5"^^xsd:nonNegativeInteger
+        ]
+        ;
 
     knora-base:resourceIcon "film.gif" ;
 
