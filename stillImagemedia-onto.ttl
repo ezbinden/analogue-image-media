@@ -108,9 +108,9 @@
 
 
 ### ###########################################
-### stillimagemedia:haslightType
+### stillimagemedia:hasLightType
 
-:haslightType rdf:type owl:ObjectProperty ;
+:hasLightType rdf:type owl:ObjectProperty ;
 
             rdfs:subPropertyOf knora-base:hasValue ;
 
@@ -242,7 +242,7 @@
         ],
         [
             rdf:type owl:Restriction ;
-            owl:onProperty :haslightType ;
+            owl:onProperty :hasLightType ;
             owl:maxCardinality "1"^^xsd:nonNegativeInteger ;
             salsah-gui:guiOrder "5"^^xsd:nonNegativeInteger
         ]
