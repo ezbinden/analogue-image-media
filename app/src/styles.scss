@@ -1,0 +1,31 @@
+/**
+  import global style definition files
+ */
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import 'assets/style/material-theme';
+
+/**
+  additional global style definitions
+ */
+body {
+  font-family: Roboto, Arial, sans-serif;
+  margin: 0;
+}
+
+.fill-remaining-space {
+  /* This fills the remaining space, by using flexbox.
+     Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+
+.center {
+  margin: 0 auto;
+}
+
+.app-link {
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(204,204,204,.5);
+  }
+}

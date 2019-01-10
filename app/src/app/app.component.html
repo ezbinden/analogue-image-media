@@ -1,0 +1,20 @@
+<mat-toolbar class="app-header">
+  <span class="logo" routerLink="">
+      <button mat-button>{{title}}</button>
+  </span>
+    <span class="fill-remaining-space"></span>
+
+    <!-- search panel: fulltext and extended search -->
+    <kui-search [route]="'/search/'"></kui-search>
+
+    <span class="fill-remaining-space"></span>
+
+    <span class="session">
+        <button mat-raised-button color="primary" routerLink="login">Login</button>
+        <button mat-button color="warn" routerLink="login">Logout</button>
+  </span>
+</mat-toolbar>
+
+<div class="app-content">
+    <router-outlet></router-outlet>
+</div>
