@@ -307,7 +307,7 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@knora/action@^6.0.0":
+"@knora/action@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@knora/action/-/action-6.0.1.tgz#bf04df58ba29c7711adc254b313feeca6b4be001"
   integrity sha512-d9L+0Tv6V5a416YKp8aeJ4HUHC8ppsoUkLEaa56h4UU9t0NF4XmCY62o6sEt4uAEvnVAZYF5IK6QeAzaKxlTyg==
@@ -321,10 +321,9 @@
   dependencies:
     tslib "^1.9.0"
 
-"@knora/core@^6.0.0":
+"@knora/core@github:dhlab-basel/Knora-ui-core-builds#v6.1.0-beta":
   version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@knora/core/-/core-6.0.0.tgz#fbfd26d43fe6f41cf83fad4e9eb7329923061bf9"
-  integrity sha512-zdKkK6tzutqVtBGZ0AyKbaxrKJ15jofdLkYYlKZ25JzNVAX3N0x2cgvghozOBFpX9mtGwfB8Qnf4OAkvOUD3HQ==
+  resolved "https://codeload.github.com/dhlab-basel/Knora-ui-core-builds/tar.gz/cf88f9fd4d26fc4c8472e773fe8474e747572a61"
   dependencies:
     tslib "^1.9.0"
 

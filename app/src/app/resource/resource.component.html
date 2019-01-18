@@ -1,100 +1,75 @@
-<mat-list>
-    <div mat-line *ngFor="let prop of resource?.properties | kuiKey">
+<kui-progress-indicator *ngIf="loading"></kui-progress-indicator>
 
-        <span>{{ontologyInfo?.getLabelForProperty(prop.key)}}</span>
+<div class="main-content" *ngIf="!loading">
+    <div class="resource"  *ngFor="let obj of resource.resources">
+        <h3 class="mat-card-subtitle">{{resource.ontologyInformation.getLabelForResourceClass(obj.type)}}</h3>
+        <h2 class="mat-card-title">{{resource?.ontologyInformation.getLabelForResourceClass(obj.type)}}</h2>
 
-        <!--  array templates -->
-        <!--  some types of properties (currently StillImageFileValues) are displayed in 1 template for the whole property list. -->
-        <!-- TODO: Do we have to check for subproperties of hasStillImageFileValue? -->
-        <br>
-        <!--        {{prop.key}}<br>
-        {{KnoraConstants.hasStillImageFileValue}}-->
+        <div *ngFor="let prop of obj?.properties | kuiKey">
+            <p>{{resource.ontologyInformation.getLabelForProperty(prop.key)}}</p>
 
-        <div *ngIf="prop.key === KnoraConstants.hasStillImageFileValue; else singleTemplates">
-            <p>OSD viewer</p>
+            <!-- if the property is of type stillImageFileValue, show the image with osd viewer from @knora/viewer -->
+            <div *ngIf="prop.key === KnoraConstants.hasStillImageFileValue; else noImage">
+                Here should be the kui-still-image (osd-viewer). <br> This resource has <strong>{{obj.stillImageRepresentationsToDisplay.length}} image(s)</strong>
+                <kui-still-image *ngIf="obj.stillImageRepresentationsToDisplay.length > 0"
+                                 class="osd-viewer"
+                                 [images]="obj?.stillImageRepresentationsToDisplay"
+                                 [imageRangeStart]="0"
+                                 [imageRangeEnd]="0"
+                                 [imageChangeInterval]="1">
+                </kui-still-image>
+            </div>
 
-            <kui-still-image #OSDViewer *ngIf="!loading && resource.stillImageRepresentationsToDisplay.length > 0" [images]="resource?.stillImageRepresentationsToDisplay" [imageRangeStart]="0" [imageRangeEnd]="0" [imageChangeInterval]="1">
-            </kui-still-image>
+            <ng-template #noImage>
 
+                <ul>
+                    <li *ngFor="let val of prop?.value">
 
-            <!--
-            <kui-still-image
-                [simple]="true"
-                [images]="resource?.stillImageRepresentationsToDisplay">
-            </kui-still-image>
-            -->
+                        <span [ngSwitch]="val.getClassName()">
+                            <kui-text-value-as-string *ngSwitchCase="KnoraConstants.ReadTextValueAsString" [valueObject]="val"></kui-text-value-as-string>
+                            <kui-text-value-as-xml *ngSwitchCase="KnoraConstants.ReadTextValueAsXml" [valueObject]="val"></kui-text-value-as-xml>
+                            <kui-date-value *ngSwitchCase="KnoraConstants.ReadDateValue" [valueObject]="val" [calendar]="true" [era]="true"></kui-date-value>
+                            <kui-link-value class="app-link" *ngSwitchCase="KnoraConstants.ReadLinkValue" [valueObject]="val" [ontologyInfo]="ontologyInfo" (referredResourceClicked)="openLink(val)"></kui-link-value>
+                            <kui-integer-value *ngSwitchCase="KnoraConstants.ReadIntegerValue" [valueObject]="val"></kui-integer-value>
+                            <kui-decimal-value *ngSwitchCase="KnoraConstants.ReadDecimalValue" [valueObject]="val"></kui-decimal-value>
+                            <kui-geometry-value *ngSwitchCase="KnoraConstants.ReadGeomValue" [valueObject]="val"></kui-geometry-value>
+                            <kui-color-value *ngSwitchCase="KnoraConstants.ReadColorValue" [valueObject]="val"></kui-color-value>
+                            <kui-uri-value *ngSwitchCase="KnoraConstants.ReadUriValue" [valueObject]="val"></kui-uri-value>
+                            <kui-boolean-value *ngSwitchCase="KnoraConstants.ReadBooleanValue" [valueObject]="val"></kui-boolean-value>
+                            <kui-interval-value *ngSwitchCase="KnoraConstants.ReadIntervalValue" [valueObject]="val"></kui-interval-value>
+                            <kui-list-value *ngSwitchCase="KnoraConstants.ReadListValue" [valueObject]="val"></kui-list-value>
+                            <kui-textfile-value *ngSwitchCase="KnoraConstants.TextFileValue" [valueObject]="val"></kui-textfile-value>
+                            <span *ngSwitchDefault>Not supported {{val.getClassName()}}</span>
+                        </span>
+
+                    </li>
+                </ul>
+            </ng-template>
+
+            <mat-divider></mat-divider>
         </div>
 
+        <!--
+        &lt;!&ndash; Check for incoming images pointing to this resource &ndash;&gt;
+        <kui-still-image #OSDViewer class="osd-viewer" *ngIf="resource?.incomingStillImageRepresentations?.length > 0;" (getImages)="changeOffsetForStillImageRepresentations($event)" [images]="resource?.stillImageRepresentationsToDisplay" [imageRangeStart]="0" [imageRangeEnd]="4" [imageChangeInterval]="5">
+        </kui-still-image>
 
-        <!--{{resource?.stillImageRepresentationsToDisplay | json}}-->
+        <br>
+        <br>
 
-        <!--  single templates -->
-        <!--  other types of properties are displayed in 1 template for each single property in the property list. -->
-        <ng-template #singleTemplates>
-            <ul>
-                <li *ngFor="let val of prop.value | kuiKey">
-                    <span [ngSwitch]="val.value.getClassName()">
-                        <p>we get the prop class:
-                            <br>{{val.value | json}}</p>
-
-                        <kui-date-value *ngSwitchCase="KnoraConstants.ReadDateValue" [valueObject]="val.value" [calendar]="true" [era]="true"></kui-date-value>
-                        <kui-integer-value *ngSwitchCase="KnoraConstants.ReadIntegerValue" [valueObject]="val.value"></kui-integer-value>
-                        <!--
-                    <read-text-value-as-html *ngSwitchCase="KnoraConstants.ReadTextValueAsHtml"
-                                             [valueObject]="val.value" [ontologyInfo]="ontologyInfo"
-                                             [bindEvents]="true"></read-text-value-as-html>
-                    <read-text-value-as-string *ngSwitchCase="KnoraConstants.ReadTextValueAsString"
-                                               [valueObject]="val.value"></read-text-value-as-string>
-                    <read-text-value-as-xml *ngSwitchCase="KnoraConstants.ReadTextValueAsXml"
-                                            [valueObject]="val.value"></read-text-value-as-xml>
-                    <read-date-value *ngSwitchCase="KnoraConstants.ReadDateValue"
-                                     [valueObject]="val.value"></read-date-value>
-                    <read-link-value *ngSwitchCase="KnoraConstants.ReadLinkValue" [valueObject]="val.value"
-                                     [ontologyInfo]="ontologyInfo"></read-link-value>
-                    <read-integer-value *ngSwitchCase="KnoraConstants.ReadIntegerValue"
-                                        [valueObject]="val.value"></read-integer-value>
-                    <read-decimal-value *ngSwitchCase="KnoraConstants.ReadDecimalValue"
-                                        [valueObject]="val.value"></read-decimal-value>
-                    <read-geom-value *ngSwitchCase="KnoraConstants.ReadGeomValue"
-                                     [valueObject]="val.value"></read-geom-value>
-                    <read-color-value *ngSwitchCase="KnoraConstants.ReadColorValue"
-                                      [valueObject]="val.value"></read-color-value>
-                    <read-uri-value *ngSwitchCase="KnoraConstants.ReadUriValue" [valueObject]="val.value"></read-uri-value>
-                    <read-boolean-value *ngSwitchCase="KnoraConstants.ReadBooleanValue"
-                                        [valueObject]="val.value"></read-boolean-value>
-                    <read-interval-value *ngSwitchCase="KnoraConstants.ReadIntervalValue"
-                                         [valueObject]="val.value"></read-interval-value>
-                    <read-list-value *ngSwitchCase="KnoraConstants.ReadListValue"
-                                     [valueObject]="val.value"></read-list-value>
-                    <read-textfile-value *ngSwitchCase="KnoraConstants.TextFileValue"
-                                         [valueObject]="val.value"></read-textfile-value>
-                    <span *ngSwitchDefault="">Not supported {{val.value.getClassName()}}</span>
-                    -->
-                    </span>
-                </li>
-            </ul>
-        </ng-template>
+        <div *ngIf="resource?.incomingLinks?.length > 0" class="incoming-link-position">
+            <p>
+                <strong>Incoming Links:</strong>
+            </p>
+            <mat-list *ngFor="let incomingLinkSourceRes of resource.incomingLinks">
+                <mat-list-item>
+                    <span class="link" (click)="showIncomingRes(incomingLinkSourceRes.id, incomingLinkSourceRes.type)">{{incomingLinkSourceRes.label}}</span>
+                </mat-list-item>
+            </mat-list>
+        </div>
+        -->
 
     </div>
 
-    <!-- Check for incoming links -->
-    <div *ngIf="resource?.incomingLinks?.length > 0">
-        <p>Incoming Links:</p>
-        <ul>
-            <li *ngFor="let incomingLinkSourceRes of resource.incomingLinks">
-                <span matTooltip="{{incomingLinkSourceRes.label}} {{ontologyInfo?.getLabelForResourceClass(incomingLinkSourceRes.type)}}">
-                    {{incomingLinkSourceRes.label}} {{getIncomingPropertiesFromIncomingResource(incomingLinkSourceRes)}}
-                </span>
-            </li>
-        </ul>
-    </div>
+</div>
 
-    <!-- Check if StillImageRepresentations are pointing to the current resource -->
-    <!-- Event getImages: more images are requested (previous or next set) -->
-
-    <kui-still-image #OSDViewer *ngIf="resource?.incomingStillImageRepresentations?.length > 0;" [images]="resource?.stillImageRepresentationsToDisplay" [imageRangeStart]="0" [imageRangeEnd]="24" [imageChangeInterval]="25">
-        <!-- I removed the following method, which we should implement again: -->
-        <!-- (getImages)="changeOffsetForStillImageRepresentations($event)" -->
-    </kui-still-image>
-
-</mat-list>
