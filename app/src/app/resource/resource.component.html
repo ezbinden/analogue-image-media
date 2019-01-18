@@ -11,6 +11,7 @@
             <!-- if the property is of type stillImageFileValue, show the image with osd viewer from @knora/viewer -->
             <div *ngIf="prop.key === KnoraConstants.hasStillImageFileValue; else noImage">
                 Here should be the kui-still-image (osd-viewer). <br> This resource has <strong>{{obj.stillImageRepresentationsToDisplay.length}} image(s)</strong>
+                <br>
                 <kui-still-image *ngIf="obj.stillImageRepresentationsToDisplay.length > 0"
                                  class="osd-viewer"
                                  [images]="obj?.stillImageRepresentationsToDisplay"
@@ -44,9 +45,8 @@
 
                     </li>
                 </ul>
+                <mat-divider></mat-divider>
             </ng-template>
-
-            <mat-divider></mat-divider>
         </div>
 
         <!--

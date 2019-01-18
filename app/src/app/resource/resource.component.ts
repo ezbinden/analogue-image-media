@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import {
-    ApiServiceError,
+    ApiServiceError, ImageRegion,
     KnoraConstants,
-    OntologyInformation,
-    ReadResourcesSequence,
-    ResourceService
+    OntologyInformation, ReadResource,
+    ReadResourcesSequence, ReadStillImageFileValue,
+    ResourceService, StillImageRepresentation
 } from '@knora/core';
 
 @Component({
@@ -31,8 +31,6 @@ export class ResourceComponent implements OnInit {
         this._route.params.subscribe((params: Params) => {
             this.iri = params['iri'];
         });
-
-
     }
 
     ngOnInit() {
@@ -41,6 +39,9 @@ export class ResourceComponent implements OnInit {
             (result: ReadResourcesSequence) => {
                 console.log(result);
                 this.resource = result;
+
+                this.collectImagesAndRegionsForResource(this.resource.resources[0]);
+
 
                 // wait until the resource is ready
                 setTimeout(() => {
@@ -52,6 +53,76 @@ export class ResourceComponent implements OnInit {
                 console.error(error);
             }
         )
+    }
+
+
+    collectImagesAndRegionsForResource(resource: ReadResource): void {
+
+        const imgRepresentations: StillImageRepresentation[] = [];
+
+        if (resource.properties[KnoraConstants.hasStillImageFileValue] !== undefined) {
+            // TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
+            // resource has StillImageFileValues that are directly attached to it (properties)
+
+            const fileValues: ReadStillImageFileValue[] = resource.properties[KnoraConstants.hasStillImageFileValue] as ReadStillImageFileValue[];
+            const imagesToDisplay: ReadStillImageFileValue[] = fileValues.filter((image) => {
+                return !image.isPreview;
+            });
+
+
+            for (const img of imagesToDisplay) {
+
+                const regions: ImageRegion[] = [];
+                for (const incomingRegion of resource.incomingRegions) {
+
+                    const region = new ImageRegion(incomingRegion);
+
+                    regions.push(region);
+
+                }
+
+                const stillImage = new StillImageRepresentation(img, regions);
+                imgRepresentations.push(stillImage);
+
+            }
+
+
+        } else if (resource.incomingStillImageRepresentations.length > 0) {
+            // there are StillImageRepresentations pointing to this resource (incoming)
+
+            const readStillImageFileValues: ReadStillImageFileValue[] = resource.incomingStillImageRepresentations.map(
+                (stillImageRes: ReadResource) => {
+                    const fileValues = stillImageRes.properties[KnoraConstants.hasStillImageFileValue] as ReadStillImageFileValue[];
+                    // TODO: check if resources is a StillImageRepresentation using the ontology responder (support for subclass relations required)
+                    const imagesToDisplay = fileValues.filter((image) => {
+                        return !image.isPreview;
+                    });
+
+                    return imagesToDisplay;
+                }
+            ).reduce(function (prev, curr) {
+                // transform ReadStillImageFileValue[][] to ReadStillImageFileValue[]
+                return prev.concat(curr);
+            });
+
+            for (const img of readStillImageFileValues) {
+
+                const regions: ImageRegion[] = [];
+                for (const incomingRegion of resource.incomingRegions) {
+
+                    const region = new ImageRegion(incomingRegion);
+                    regions.push(region);
+
+                }
+
+                const stillImage = new StillImageRepresentation(img, regions);
+                imgRepresentations.push(stillImage);
+            }
+
+        }
+
+        resource.stillImageRepresentationsToDisplay = imgRepresentations;
+
     }
 
     openLink(prop: any) {
