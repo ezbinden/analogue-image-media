@@ -49,6 +49,19 @@
             </ng-template>
         </div>
 
+        <mat-divider></mat-divider>
+
+        <div *ngIf="obj.incomingLinks?.length > 0">
+            <p>
+                <strong>Incoming Links:</strong>
+            </p>
+            <mat-list *ngFor="let incoming of obj.incomingLinks">
+                <mat-list-item>
+                    <span class="link" (click)="openLink(incoming)">{{incoming.label}}</span>
+                </mat-list-item>
+            </mat-list>
+        </div>
+
         <!--
         &lt;!&ndash; Check for incoming images pointing to this resource &ndash;&gt;
         <kui-still-image #OSDViewer class="osd-viewer" *ngIf="resource?.incomingStillImageRepresentations?.length > 0;" (getImages)="changeOffsetForStillImageRepresentations($event)" [images]="resource?.stillImageRepresentationsToDisplay" [imageRangeStart]="0" [imageRangeEnd]="4" [imageChangeInterval]="5">
