@@ -29,17 +29,30 @@ export class ResourceComponent implements OnInit {
                 protected _resourceService: ResourceService,
                 protected _incomingService: IncomingService
     ) {
-        this._route.params.subscribe((params: Params) => {
-            this.iri = params['iri'];
-        });
+
     }
 
     ngOnInit() {
         this.loading = true;
-        this._resourceService.getReadResource(decodeURIComponent(this.iri)).subscribe(
+
+        this._route.queryParams.subscribe(queryParams => {
+            console.log(queryParams);
+        });
+
+        this._route.params.subscribe((params: Params) => {
+            this.iri = params['iri'];
+            this.getResource(this.iri);
+        });
+
+    }
+
+    getResource(id: string) {
+        this._resourceService.getReadResource(decodeURIComponent(id)).subscribe(
             (result: ReadResourcesSequence) => {
                 console.log(result);
                 this.resource = result;
+
+                this.ontologyInfo = result.ontologyInformation;
 
                 // collect images and regions
                 this.collectImagesAndRegionsForResource(this.resource.resources[0]);
@@ -59,7 +72,6 @@ export class ResourceComponent implements OnInit {
             }
         )
     }
-
 
     collectImagesAndRegionsForResource(resource: ReadResource): void {
 
@@ -191,6 +203,8 @@ export class ResourceComponent implements OnInit {
 
     getIncomingLinks(offset: number, callback?: (numberOfResources: number) => void): void {
 
+        this.loading = true;
+
         this._incomingService.getIncomingLinksForResource(this.resource.resources[0].id, offset).subscribe(
             (incomingResources: ReadResourcesSequence) => {
                 // update ontology information
@@ -203,6 +217,8 @@ export class ResourceComponent implements OnInit {
                 if (callback !== undefined) {
                     callback(incomingResources.resources.length);
                 }
+
+                this.loading = false;
             },
             (error: any) => {
                 console.error(error);
@@ -211,8 +227,10 @@ export class ResourceComponent implements OnInit {
         );
     }
 
-    openLink(prop: any) {
-        console.log(prop);
-//        this._router.navigate(['/resource/' + encodeURIComponent(prop.referredResource.id)]);
+    openLink(id: string) {
+
+        this.loading = true;
+        this._router.navigate(['/resource/' + encodeURIComponent(id)]);
+
     }
 }
